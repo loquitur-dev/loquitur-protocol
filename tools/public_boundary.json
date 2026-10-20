@@ -1,0 +1,34 @@
+{
+  "archive_member_lists": [
+    "disclosure",
+    "private_perimeter"
+  ],
+  "corpus_lock": "CONFORMANCE_LOCK.json",
+  "forbidden_roots": [
+    "*.dist-info",
+    "*.egg-info",
+    ".eggs",
+    "build",
+    "dist",
+    "docs-site",
+    "examples",
+    "exports",
+    "logs",
+    "node_modules",
+    "openapi",
+    "outputs",
+    "runtime",
+    "schemas",
+    "scripts",
+    "test_support",
+    "verify",
+    "verify-ts",
+    "website"
+  ],
+  "needle_lists": [
+    "claim_discipline",
+    "private_perimeter"
+  ],
+  "reviewed": [],
+  "schema_version": "loquitur.public_boundary.v1"
+}

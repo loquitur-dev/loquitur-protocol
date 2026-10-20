@@ -1,0 +1,60 @@
+name: Change proposal (LCP)
+description: Propose a change to the protocol, through the change-proposal register.
+labels: ["change-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A normative change goes through the register in docs/change-proposals.md. This issue opens
+        the discussion; the proposal itself follows docs/specification/change-proposal.schema.json.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: The change, in a few sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: surface
+    attributes:
+      label: Specification surface
+      description: The files and sections that change, and the artifacts (schemas, catalog, vocabularies) that change with them.
+    validations:
+      required: true
+  - type: dropdown
+    id: class
+    attributes:
+      label: Proposed compatibility class
+      description: One of the classes in docs/specification/compatibility-classes.json. An unclassified change defaults to breaking.
+      options:
+        - I do not know
+        - wire-exact
+        - semantic-exact
+        - additive-compatible
+        - breaking
+        - wire-exact-legacy
+        - implementation-assurance
+        - governance-only
+        - source-api-breaking
+        - vocabulary-registration
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why
+      description: The problem, and what an implementer cannot do or cannot tell today.
+    validations:
+      required: true
+  - type: textarea
+    id: vectors
+    attributes:
+      label: Conformance vectors
+      description: The runs that would show the change, with the report each declares.
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Before you submit
+      options:
+        - label: The proposal contains no private evidence, keys, credentials or confidential third-party material.
+          required: true

@@ -1,0 +1,22 @@
+{
+  "conformance_lock": "CONFORMANCE_LOCK.json",
+  "excluded_surfaces": [
+    "conformance source repository",
+    "schemas package",
+    "verify package",
+    "verify-ts package"
+  ],
+  "included_surfaces": [
+    "protocol docs",
+    "governance files",
+    "boundary tests",
+    "protocol-owned conformance lock and release metadata",
+    "cryptographic capability matrix",
+    "verification vocabulary contract"
+  ],
+  "protocol_release_id": "loquitur-protocol-0.1.0",
+  "release_posture": "controlled public preview with independent blocking conformance oracle, signing envelope v2, secp256k1-only capabilities and closed verification vocabularies; no known consumer disagreements remain, and an unexpected one fails the release closed",
+  "release_set_id": "loquitur-release-set-0.1.0",
+  "repo": "loquitur-protocol",
+  "status": "public-specification-preview"
+}

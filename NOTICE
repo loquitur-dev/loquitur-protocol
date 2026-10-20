@@ -1,0 +1,18 @@
+loquitur-protocol
+Copyright 2026 Andrea Venè
+
+The specification, that is the Markdown documents under docs/specification/
+and its table of contents, docs/README.md, is licensed under the Creative
+Commons Attribution 4.0 International license (CC BY 4.0). See the
+LICENSE-docs file for the full license text. The code blocks, examples and
+schema fragments inside the specification are also available under
+MIT OR Apache-2.0, at your option.
+
+Every other file of this repository, among them the other Markdown documents,
+the JSON artifacts, the conformance archive, the tools and the tests, is
+licensed under either of
+
+  * the Apache License, Version 2.0 (LICENSE-APACHE), or
+  * the MIT license (LICENSE-MIT),
+
+at your option. Its SPDX license expression is MIT OR Apache-2.0.

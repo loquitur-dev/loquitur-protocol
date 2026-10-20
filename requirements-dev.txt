@@ -1,0 +1,38 @@
+# Test dependencies for loquitur-protocol.
+#
+# This repository publishes the normative specification and its governance
+# artifacts. It is deliberately NOT a Python package (tools/check_public_spec_boundary.py
+# fails if packaging build residue appears), so it has no [project] section and no
+# extras. Declaring the test dependencies here keeps the checks reproducible:
+#
+#   pip install -r requirements-dev.txt
+#   python -m pytest -q
+#
+# In a single-repository clone, which is what CI runs and what a public reader gets, that
+# sequence passes, with the tests that need a sibling repository (for example the release-set
+# coherence check and the normative mirror comparison) skipped and saying which one. With the
+# sibling repositories checked out beside this one those tests run as well. A skip is the
+# outcome for a check whose repository is not there, not a pass.
+pytest>=8,<10
+
+# Required by tools/validate_corpus.py to validate the corpus's schema fixtures.
+jsonschema>=4.21,<5
+
+# Required by tools/validate_corpus.py to verify the corpus's signature vectors. The floor matches
+# loquitur-schemas: wheels before 48.0.1 statically link an OpenSSL affected by
+# GHSA-537c-gmf6-5ccf.
+cryptography>=48.0.1,<51
+
+# Required by tests/test_release_workflow.py to read .github/workflows/release.yml as the runner
+# reads it, rather than by pattern.
+pyyaml>=6.0.1,<7
+
+# The linter the CI job runs over tools/ and tests/, pinned as in the sibling repositories: an
+# unpinned linter changes the gate without a commit.
+ruff==0.15.12
+
+# Required by the Python verifier's conformance adapter, which the conformance-testing.md
+# tests run from a sibling loquitur-verify-py checkout; the range is the one loquitur-verify-py
+# and loquitur-schemas declare: the release the canonical bytes are tested against, and its
+# minor line.
+rfc8785>=0.1.4,<0.2

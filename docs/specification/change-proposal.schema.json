@@ -1,0 +1,82 @@
+{
+  "$id": "https://governance.loquitur.dev/schemas/protocol-change-proposal-v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "affected_owner_artifacts": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "affected_profiles": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "approvals": {
+      "minItems": 1,
+      "type": "array"
+    },
+    "change_id": {
+      "pattern": "^LCP-[0-9]{4}$",
+      "type": "string"
+    },
+    "compatibility_class": {
+      "description": "Compatibility class of the proposed change. This list is the set of ids declared in compatibility-classes.json and is bound to it by tests/test_change_proposal_schema.py; the two cannot diverge silently.",
+      "enum": [
+        "wire-exact",
+        "semantic-exact",
+        "additive-compatible",
+        "breaking",
+        "wire-exact-legacy",
+        "implementation-assurance",
+        "governance-only",
+        "source-api-breaking",
+        "vocabulary-registration"
+      ]
+    },
+    "migration": {
+      "type": "object"
+    },
+    "new_behavior": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "old_behavior": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "required_consumers": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "loquitur.protocol_change_proposal.v1"
+    },
+    "title": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "change_id",
+    "title",
+    "compatibility_class",
+    "affected_profiles",
+    "affected_owner_artifacts",
+    "required_consumers",
+    "old_behavior",
+    "new_behavior",
+    "migration",
+    "approvals"
+  ],
+  "title": "Loquitur Protocol Change Proposal v1",
+  "type": "object"
+}

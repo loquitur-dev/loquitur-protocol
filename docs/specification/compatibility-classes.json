@@ -1,0 +1,69 @@
+{
+  "classes": [
+    {
+      "id": "wire-exact",
+      "meaning": "Exact canonical bytes, field presence, algorithm and expected outcome are unchanged.",
+      "rank": 0,
+      "requires_consumer_coordination": true,
+      "requires_new_protocol_version": false
+    },
+    {
+      "id": "semantic-exact",
+      "meaning": "Wire representation may be regenerated without changing parsed meaning or expected outcome.",
+      "rank": 1,
+      "requires_consumer_coordination": true,
+      "requires_new_protocol_version": false
+    },
+    {
+      "id": "additive-compatible",
+      "meaning": "Optional capability is added and every older consumer remains conforming for the pre-existing profile.",
+      "rank": 2,
+      "requires_consumer_coordination": true,
+      "requires_new_protocol_version": true
+    },
+    {
+      "id": "breaking",
+      "meaning": "Existing valid bytes, accepted objects or expected outcomes change. Coordinated migration and downgrade policy are mandatory.",
+      "rank": 3,
+      "requires_consumer_coordination": true,
+      "requires_new_protocol_version": true
+    },
+    {
+      "id": "wire-exact-legacy",
+      "meaning": "Current behavior is frozen only to make a known defect explicit. It must be superseded by a new profile, never silently edited.",
+      "rank": 4,
+      "requires_consumer_coordination": true,
+      "requires_new_protocol_version": true
+    },
+    {
+      "id": "implementation-assurance",
+      "meaning": "Security or robustness corpus that does not itself define protocol semantics.",
+      "rank": 5,
+      "requires_consumer_coordination": false,
+      "requires_new_protocol_version": false
+    },
+    {
+      "id": "governance-only",
+      "meaning": "Ownership, process or metadata change with no wire or expected-outcome change.",
+      "rank": 6,
+      "requires_consumer_coordination": false,
+      "requires_new_protocol_version": false
+    },
+    {
+      "id": "source-api-breaking",
+      "meaning": "Public source-language or compile-time consumer contracts change while accepted JSON bytes, protocol wire semantics and expected verification outcomes remain unchanged.",
+      "rank": 7,
+      "requires_consumer_coordination": true,
+      "requires_new_protocol_version": false
+    },
+    {
+      "id": "vocabulary-registration",
+      "meaning": "A value is added to, or deprecated in, a registered vocabulary. No schema, closed vocabulary or rule changes; a consumer holding an earlier version of the vocabulary reports the value as unknown and remains conforming.",
+      "rank": 8,
+      "requires_consumer_coordination": false,
+      "requires_new_protocol_version": false
+    }
+  ],
+  "default_for_unclassified_change": "breaking",
+  "schema_version": "loquitur.compatibility_classes.v1"
+}

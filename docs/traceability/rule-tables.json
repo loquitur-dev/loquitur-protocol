@@ -1,0 +1,354 @@
+{
+  "schema_version": "loquitur.rule_tables.v1",
+  "description": "The tables, numbered lists and headings of the specification whose every row the requirements inventory names (tools/requirements_inventory.py). A row is found by its natural key, the cell of the column `key`, never by its position.",
+  "tables": [
+    {
+      "id": "BND-archive-rules",
+      "document": "bundle-objects.md",
+      "section": "5",
+      "kind": "table",
+      "header": [
+        "rule",
+        "an entry is refused when",
+        "error"
+      ],
+      "key": "rule",
+      "subject": "the archive intake rules"
+    },
+    {
+      "id": "CAN-constructions",
+      "document": "canonicalization-and-hashing.md",
+      "section": "3",
+      "kind": "table",
+      "header": [
+        "Artifact",
+        "Bytes hashed"
+      ],
+      "key": "Artifact",
+      "subject": "the hash constructions"
+    },
+    {
+      "id": "CAN-input-rules",
+      "document": "canonicalization-and-hashing.md",
+      "section": "6",
+      "kind": "list",
+      "subject": "the input-strictness rules 1 to 9"
+    },
+    {
+      "id": "CAN-instants",
+      "document": "canonicalization-and-hashing.md",
+      "section": "6",
+      "kind": "table",
+      "header": [
+        "instant",
+        "calendar instant"
+      ],
+      "key": "instant",
+      "subject": "calendar instants"
+    },
+    {
+      "id": "DC-10",
+      "document": "document-contracts.md",
+      "section": "10",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 10"
+    },
+    {
+      "id": "DC-11",
+      "document": "document-contracts.md",
+      "section": "11",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 11"
+    },
+    {
+      "id": "DC-12",
+      "document": "document-contracts.md",
+      "section": "12",
+      "kind": "table",
+      "header": [
+        "input",
+        "required",
+        "form",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "input",
+      "subject": "the verifier's own inputs"
+    },
+    {
+      "id": "DC-15",
+      "document": "document-contracts.md",
+      "section": "15",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 15"
+    },
+    {
+      "id": "DC-3",
+      "document": "document-contracts.md",
+      "section": "3",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 3"
+    },
+    {
+      "id": "DC-4",
+      "document": "document-contracts.md",
+      "section": "4",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 4"
+    },
+    {
+      "id": "DC-5",
+      "document": "document-contracts.md",
+      "section": "5",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 5"
+    },
+    {
+      "id": "DC-6",
+      "document": "document-contracts.md",
+      "section": "6",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 6"
+    },
+    {
+      "id": "DC-7",
+      "document": "document-contracts.md",
+      "section": "7",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 7"
+    },
+    {
+      "id": "DC-8",
+      "document": "document-contracts.md",
+      "section": "8",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 8"
+    },
+    {
+      "id": "DC-9",
+      "document": "document-contracts.md",
+      "section": "9",
+      "kind": "table",
+      "header": [
+        "member",
+        "required",
+        "type",
+        "value",
+        "refused",
+        "outcome",
+        "rule"
+      ],
+      "key": "member",
+      "subject": "member rows of document-contracts.md section 9"
+    },
+    {
+      "id": "RPT-errors",
+      "document": "report-contract.md",
+      "section": "5.3",
+      "kind": "table",
+      "header": [
+        "code",
+        "class",
+        "condition"
+      ],
+      "key": "code",
+      "subject": "the error codes of a report"
+    },
+    {
+      "id": "RPT-outcomes",
+      "document": "report-contract.md",
+      "section": "3.1",
+      "kind": "table",
+      "header": [
+        "`status`",
+        "`verdict`",
+        "`exit_code`",
+        "class",
+        "meaning"
+      ],
+      "key": "`status`",
+      "subject": "the outcome table: status, verdict and exit code"
+    },
+    {
+      "id": "RPT-reason-rules",
+      "document": "report-contract.md",
+      "section": "5.2",
+      "kind": "table",
+      "header": [
+        "#",
+        "the run",
+        "`outcome.reason`"
+      ],
+      "key": "#",
+      "subject": "the rules that choose outcome.reason"
+    },
+    {
+      "id": "RPT-review-reasons",
+      "document": "report-contract.md",
+      "section": "3.3",
+      "kind": "table",
+      "header": [
+        "#",
+        "review reason",
+        "holds when"
+      ],
+      "key": "review reason",
+      "subject": "the review reasons"
+    },
+    {
+      "id": "TRA-order",
+      "document": "trust-registry-authorization.md",
+      "section": "6",
+      "kind": "table",
+      "header": [
+        "#",
+        "condition",
+        "`authorization_status`",
+        "`signature_status`",
+        "effect"
+      ],
+      "key": "#",
+      "subject": "the evaluation order of the authorization check"
+    },
+    {
+      "id": "ROOT-order",
+      "document": "trust-root.md",
+      "section": "5",
+      "kind": "table",
+      "header": [
+        "#",
+        "condition",
+        "status",
+        "effect"
+      ],
+      "key": "#",
+      "subject": "the evaluation order of root authentication"
+    },
+    {
+      "id": "VG-rules",
+      "document": "verdict-grounds.md",
+      "section": "3",
+      "kind": "headings",
+      "pattern": "VG-[0-9]+",
+      "subject": "the verdict-grounds rules"
+    },
+    {
+      "id": "VOC-document",
+      "document": "verification-vocabularies.md",
+      "section": "6",
+      "kind": "table",
+      "header": [
+        "field",
+        "type",
+        "required",
+        "meaning"
+      ],
+      "key": "field",
+      "subject": "the members of a registered vocabulary document"
+    },
+    {
+      "id": "VOC-values",
+      "document": "verification-vocabularies.md",
+      "section": "7",
+      "kind": "table",
+      "header": [
+        "value",
+        "definition",
+        "what follows"
+      ],
+      "key": "value",
+      "subject": "known, unknown and invalid values"
+    }
+  ]
+}

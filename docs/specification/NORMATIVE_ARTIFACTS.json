@@ -1,0 +1,172 @@
+{
+  "artifacts": [
+    {
+      "bytes": 4749,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/change_summary.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/change_summary.schema.json",
+      "sha256": "979544363fc5bd4a9212971275a2ab9001add99acd0cb2f227ffd71c656d39b4"
+    },
+    {
+      "bytes": 6919,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/coverage_summary.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/coverage_summary.schema.json",
+      "sha256": "0ab18e2ccd78dfda90545bf72de5fdf5aa8f1a428ea4edd26614be791424e158"
+    },
+    {
+      "bytes": 2801,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/lineage_summary.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/lineage_summary.schema.json",
+      "sha256": "6c93f1b9b7a2217ff2d06e33f000a6a6dd6309928d6945b01aa1cfb1502a65fe"
+    },
+    {
+      "bytes": 10227,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/registry_entry.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/registry_entry.schema.json",
+      "sha256": "8d7e5851962d259ede7d7913c201908bfe6b46f4eb0b2fa85a4a9891d1724abf"
+    },
+    {
+      "bytes": 8571,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/trust_registry.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/trust_registry.schema.json",
+      "sha256": "ed491e13e0a91027bc4e3d9c738ae04000295a82834fd73645be4ecf4155f602"
+    },
+    {
+      "bytes": 7637,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/verification_receipt.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/verification_receipt.schema.json",
+      "sha256": "88a132f58225449ced6d6d2a4c6ba470b888d42593249789387946ce3ecb4d6c"
+    },
+    {
+      "bytes": 8869,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/verification_summary.schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/schemas/verification_summary.schema.json",
+      "sha256": "00d9cc730ab910b86b19535b282899d2c55a827940f105916bc86bbdef160e52"
+    },
+    {
+      "bytes": 10368,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/reason_codes_catalog/schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/reason-codes/schema.json",
+      "sha256": "98ff19645b253f63f06e90ade68f7f56d39eb186c569163784b6365128497c90"
+    },
+    {
+      "bytes": 82738,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/reason_codes_catalog/v2.0/catalog.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/reason-codes/v2.0/catalog.json",
+      "sha256": "fa7211ad3168bce5e4ce85e60c458255eaec7276dd23bf1baf94bc092903db52"
+    },
+    {
+      "bytes": 2769,
+      "mirrors": [
+        {
+          "path": "compatibility-classes.json",
+          "repository": "loquitur-conformance"
+        }
+      ],
+      "path": "docs/specification/compatibility-classes.json",
+      "sha256": "e1a913dc3a1a7c772c4a4008e52bfc59814d5953338d4d516972ba6d7783460e"
+    },
+    {
+      "bytes": 1948,
+      "mirrors": [
+        {
+          "path": "governance/change-proposal.schema.json",
+          "repository": "loquitur-conformance"
+        }
+      ],
+      "path": "docs/specification/change-proposal.schema.json",
+      "sha256": "c441e00bae5a61402e78ec469d975a02e968d9b3b04196991a4855e666745a79"
+    },
+    {
+      "bytes": 3531,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/registered_vocabularies/schema.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "docs/specification/registered-vocabularies/schema.json",
+      "sha256": "941593bef3b67c401c314c790e0107ce9be89601cf8eda6d482ad58dff3b6f93"
+    },
+    {
+      "bytes": 631,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/registered_vocabularies/anchoring_method.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "vocabularies/anchoring_method.json",
+      "sha256": "931dcba1c63359702634794f3d9c408b46e70645468f1cd53e0b9f12f213f860"
+    },
+    {
+      "bytes": 400,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/registered_vocabularies/asset_type.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "vocabularies/asset_type.json",
+      "sha256": "c5ae2936e0ab1fab0cd5c13010f62e4b05bf8e8d8a5536d34e0a81a5e141ccc4"
+    },
+    {
+      "bytes": 928,
+      "mirrors": [
+        {
+          "path": "src/loquitur/schemas/data/registered_vocabularies/workflow.json",
+          "repository": "loquitur-schemas"
+        }
+      ],
+      "path": "vocabularies/workflow.json",
+      "sha256": "a979ad5b26ae56841e32de648addb952acd592f5d9824c62f9bb9ca9b146ae8b"
+    }
+  ],
+  "note": "This repository owns these bytes. Every other copy, including the loquitur-schemas package data and the mirrors inside the conformance archive, is a mirror of them and must match. Generated by tools/check_normative_mirrors.py --write.",
+  "owner": "loquitur-protocol",
+  "schema_version": "loquitur.normative_artifacts.v1"
+}

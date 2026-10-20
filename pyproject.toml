@@ -1,0 +1,22 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# The boundary checker is one file kept byte-identical in four repositories; it is linted where
+# its copies are compared, never rewritten here alone.
+extend-exclude = ["tools/check_public_spec_boundary.py"]
+
+[tool.ruff.lint]
+# Declared explicitly, and identical to the sibling repositories: ruff's default rule set
+# changes between ruff releases, and the rules this repository is held to must not change
+# with them.
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests bind a loop variable they do not use when iterating (name, value) pairs for the
+# value alone, and keep long fixture strings. Tooling keeps long diagnostic messages.
+"tools/**" = ["E501"]
+"tests/**" = ["B007", "E501", "E402"]

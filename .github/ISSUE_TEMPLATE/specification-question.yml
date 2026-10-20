@@ -1,0 +1,30 @@
+name: Specification question or error
+description: Ask what a sentence of the specification means, or report that it is unclear, contradictory or wrong.
+labels: ["specification"]
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Where
+      description: The file and section, such as docs/specification/report-contract.md section 3.2, and the release tag you read.
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or error
+      description: What the text says, what you expected, and why the two differ.
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Input, if a run is involved
+      description: The exact input and the report you got. Do not paste private evidence, keys or credentials.
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Before you submit
+      options:
+        - label: This is not a vulnerability report. Those go through the private channel in SECURITY.md.
+          required: true

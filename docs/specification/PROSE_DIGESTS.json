@@ -1,0 +1,120 @@
+{
+  "files": [
+    {
+      "bytes": 5283,
+      "path": "GOVERNANCE.md",
+      "sha256": "1924390e10807f5225f11f11e41c4cd762c5671245e6d09a9c6e4afc39e3cd39"
+    },
+    {
+      "bytes": 4169,
+      "path": "PROTOCOL_RELEASE.json",
+      "sha256": "d238a88a107ff5e09c2724672e0b15032af12a13ae0f6a196e81cb146659d279"
+    },
+    {
+      "bytes": 8629,
+      "path": "docs/change-proposals.md",
+      "sha256": "8b385923597ac3dccbde6ced97fdeb1e9a6a8dc8880d9cb212ff218a71231333"
+    },
+    {
+      "bytes": 14178,
+      "path": "docs/specification/README.md",
+      "sha256": "10363b63642070e86d6c7bfa3521cb1f6c05e002d4f1591cf9015fe85b71f50d"
+    },
+    {
+      "bytes": 7158,
+      "path": "docs/specification/anchor-commitment.md",
+      "sha256": "3b4e658cb983e9a01acb3f029dd60ba2e34f098c39abd8ba14e91b4b14b85541"
+    },
+    {
+      "bytes": 47981,
+      "path": "docs/specification/bundle-objects.md",
+      "sha256": "3033d73966251361f189dda192d0dba2706c1f166ef775bf32592a48347a044f"
+    },
+    {
+      "bytes": 20134,
+      "path": "docs/specification/canonicalization-and-hashing.md",
+      "sha256": "d239bc4ca74642e559751c3625421eea85e4c74583b2ab1f57df0992eb0b5cb7"
+    },
+    {
+      "bytes": 45959,
+      "path": "docs/specification/conformance-testing.md",
+      "sha256": "96c9d5c7d5f4c652ff16176faa7abe9ec6bf0d4b91d9c5f334ab8b7cbe2d8615"
+    },
+    {
+      "bytes": 4880,
+      "path": "docs/specification/cryptographic-capabilities.md",
+      "sha256": "728ebdc7f1ff9dadf8f2dfe9af5a727cb8f704833cb3eb6d93fbabfe3dd297b3"
+    },
+    {
+      "bytes": 74560,
+      "path": "docs/specification/document-contracts.md",
+      "sha256": "91120edb87c5e7b14dee4a052510708e90d5b66b42028611f3c182e686e0129c"
+    },
+    {
+      "bytes": 30635,
+      "path": "docs/specification/introduction.md",
+      "sha256": "737512af92612a8866882f9bf53209889540519d45a09b6280d6eb9c0e80327b"
+    },
+    {
+      "bytes": 8357,
+      "path": "docs/specification/public-private-boundary.md",
+      "sha256": "40b55dbfae8279ccdb88d6b6e703f18af174da4772aa76251e4abd4dbc7201b1"
+    },
+    {
+      "bytes": 23158,
+      "path": "docs/specification/reason-codes.md",
+      "sha256": "e60b8abace14f440f33886dba578e9856004db4d9a950dbb416dedbd7809b5a8"
+    },
+    {
+      "bytes": 10727,
+      "path": "docs/specification/registry-entry.md",
+      "sha256": "fffc194740875f4a3e9984145bf1aaea9b327f99cd5740a97b55e87df3fe1365"
+    },
+    {
+      "bytes": 19134,
+      "path": "docs/specification/registry-link.md",
+      "sha256": "afa2e08d9d61a0c43a855080812880ca1665b1bc1b76a3b27e4238c56c94382a"
+    },
+    {
+      "bytes": 50602,
+      "path": "docs/specification/report-contract.md",
+      "sha256": "7e6ea1acc9c973731c24eeb11aedfa095513730ded068685a7f6d31976efca0a"
+    },
+    {
+      "bytes": 3448,
+      "path": "docs/specification/signing-envelope-v2.md",
+      "sha256": "b037ea83987506e4472973e834a8a5e183684bf6be22880db350c6314016d767"
+    },
+    {
+      "bytes": 74710,
+      "path": "docs/specification/threat-model.md",
+      "sha256": "0a7b1b52b3796ac078ffd50403e3308593e003a3df7152356e15c4e826d78911"
+    },
+    {
+      "bytes": 28859,
+      "path": "docs/specification/trust-registry-authorization.md",
+      "sha256": "2896d8bbb4314a2aa04006fd9825edae7509ba34fd8d029a2ca0828e24c11244"
+    },
+    {
+      "bytes": 24624,
+      "path": "docs/specification/trust-root.md",
+      "sha256": "9ab4743cf131caba98dca8c8c4fc5b40a886084511673b47963e17c2db1999a2"
+    },
+    {
+      "bytes": 25575,
+      "path": "docs/specification/verdict-grounds.md",
+      "sha256": "498db240fbcbf365ab71f814adfcab949aa34a36e949e4d802881a9e81fb03b5"
+    },
+    {
+      "bytes": 11289,
+      "path": "docs/specification/verification-checks.md",
+      "sha256": "1e6fe27885b3a9fdcc678d8799c9803e7a0b42f037ead9147d8aeddad3b2bd2b"
+    },
+    {
+      "bytes": 14583,
+      "path": "docs/specification/verification-vocabularies.md",
+      "sha256": "74b09449cddb85c69f9bf8753e51d44d6c08e36f41edee4873484c7f47e97ab8"
+    }
+  ],
+  "schema_version": "loquitur.prose_digests.v1"
+}

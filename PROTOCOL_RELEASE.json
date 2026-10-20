@@ -1,0 +1,142 @@
+{
+  "approval_rule": {
+    "breaking_change_requires": [
+      "protocol-governance",
+      "all-affected-consumers",
+      "migration-vectors",
+      "downgrade-policy"
+    ],
+    "unclassified_change": "breaking"
+  },
+  "conformance": {
+    "compatibility_class_default": "breaking",
+    "lock_path": "CONFORMANCE_LOCK.json",
+    "oracle_policy_path": "CONFORMANCE_ORACLE_POLICY.json"
+  },
+  "cryptographic_capabilities": {
+    "path": "CRYPTOGRAPHIC_CAPABILITIES.json",
+    "profile_id": "loquitur.crypto_capabilities.v0.1",
+    "reserved_not_supported": [
+      "ed25519"
+    ],
+    "signature_algorithms": [
+      "secp256k1_ecdsa_sha256"
+    ],
+    "trust_registry_key_types": [
+      "secp256k1"
+    ],
+    "unknown_algorithm_policy": "reject"
+  },
+  "non_claims": [
+    "not-a-deployment-approval",
+    "not-a-guarantee-of-consumer-conformance-outside-the-exercised-vectors",
+    "not-a-partner-readiness-claim",
+    "not-a-production-key-custody-approval",
+    "not-a-release-candidate",
+    "not-an-authenticated-trust-root",
+    "not-an-external-cryptographic-audit",
+    "not-an-sdk-publication-approval"
+  ],
+  "normative_owner": "loquitur-protocol-governance",
+  "parent_release_set_id": "loquitur-release-set-initial",
+  "profiles": [
+    {
+      "compatibility_class": "wire-exact",
+      "id": "canonical-json-v1",
+      "status": "current"
+    },
+    {
+      "compatibility_class": "wire-exact",
+      "id": "schema-validity-v1",
+      "status": "current"
+    },
+    {
+      "compatibility_class": "semantic-exact",
+      "id": "offline-verification-v1",
+      "status": "current"
+    },
+    {
+      "compatibility_class": "semantic-exact",
+      "id": "registry-link-v1",
+      "status": "current"
+    },
+    {
+      "compatibility_class": "wire-exact-legacy",
+      "id": "trust-authorization-v1",
+      "planned_branch": "a-later-release",
+      "status": "legacy-current-incomplete-root-assurance"
+    },
+    {
+      "compatibility_class": "wire-exact",
+      "id": "public-object-projection-v1",
+      "status": "current"
+    },
+    {
+      "compatibility_class": "breaking",
+      "id": "registry-entry-signing-envelope-v2",
+      "status": "canonical"
+    },
+    {
+      "compatibility_class": "breaking",
+      "id": "cryptographic-capability-matrix-v0.1",
+      "status": "canonical-closed-secp256k1-capability-set"
+    },
+    {
+      "compatibility_class": "source-api-breaking",
+      "id": "schema-generated-types-v1",
+      "status": "canonical-schema-generated-types-and-explicit-untrusted-input-boundary"
+    },
+    {
+      "compatibility_class": "semantic-exact",
+      "id": "independent-conformance-oracle-v1",
+      "status": "canonical-blocking-oracle"
+    },
+    {
+      "compatibility_class": "semantic-exact",
+      "id": "registered-vocabularies-v1",
+      "status": "current"
+    }
+  ],
+  "protocol_release_id": "loquitur-protocol-0.1.0",
+  "registered_vocabularies": {
+    "files": {
+      "anchoring_method": "vocabularies/anchoring_method.json",
+      "asset_type": "vocabularies/asset_type.json",
+      "workflow": "vocabularies/workflow.json"
+    },
+    "invalid_value": "contract-violation",
+    "kinds": [
+      "asset_type",
+      "workflow",
+      "anchoring_method"
+    ],
+    "meta_schema": "docs/specification/registered-vocabularies/schema.json",
+    "unknown_value": "review"
+  },
+  "release_set_id": "loquitur-release-set-0.1.0",
+  "required_consumers": [
+    "loquitur-schemas",
+    "loquitur-verify-py",
+    "loquitur-verify-ts"
+  ],
+  "schema_version": "loquitur.protocol_release.v1",
+  "status": "independent-conformance-oracle-active-no-known-consumer-disagreements",
+  "verification_vocabularies": {
+    "path": "VERIFICATION_VOCABULARIES.json",
+    "profile_id": "loquitur.verification_vocabularies.v0.1",
+    "registry_verdicts": [
+      "PASS",
+      "WARN",
+      "REVIEW",
+      "FAIL"
+    ],
+    "unknown_status_policy": "unknown is not a verification status: it resolves to no registry verdict, no producer emits it, and the severity rule makes it unreachable",
+    "verification_statuses": [
+      "pass",
+      "warning",
+      "review",
+      "fail"
+    ]
+  },
+  "wire_semantic_change": false
+}

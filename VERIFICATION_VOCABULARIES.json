@@ -1,0 +1,33 @@
+{
+  "branch_id": "0.1.0",
+  "closed_status_vocabulary": true,
+  "extension_rule": "breaking-protocol-change-with-schema-types-and-conformance-update",
+  "non_claims": [
+    "not-a-new-runtime-verdict",
+    "not-a-trust-root-authentication-claim"
+  ],
+  "owner": "loquitur-protocol-governance",
+  "profile_id": "loquitur.verification_vocabularies.v0.1",
+  "protocol_release_line": "0.1",
+  "registry_verdicts": [
+    "PASS",
+    "WARN",
+    "REVIEW",
+    "FAIL"
+  ],
+  "release_set_id": "loquitur-release-set-0.1.0-schema-types",
+  "schema_version": "loquitur.verification_vocabularies.v1",
+  "status_to_registry_verdict": {
+    "fail": "FAIL",
+    "pass": "PASS",
+    "review": "REVIEW",
+    "warning": "WARN"
+  },
+  "unknown_status_policy": "unknown is not a verification status: it resolves to no registry verdict, no producer emits it, and the severity rule makes it unreachable",
+  "verification_statuses": [
+    "pass",
+    "warning",
+    "review",
+    "fail"
+  ]
+}

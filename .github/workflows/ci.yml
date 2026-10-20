@@ -1,0 +1,270 @@
+name: ci
+on:
+  # Pushes to main, and pull requests: a branch is checked through its pull request, not a second
+  # time by its pushes. A push of any tag runs this workflow, except a release tag vX.Y.Z, since
+  # release.yml calls it on that commit and a second run would only repeat it; the excluded
+  # pattern is the one release.yml starts on. With `branches` set, a tag push runs the workflow
+  # only through a `tags` filter, and GitHub takes `tags` or `tags-ignore`, not both: so `tags`
+  # names every tag, then excludes the release ones.
+  push:
+    branches: [main]
+    tags: ["**", "!v[0-9]+.[0-9]+.[0-9]+"]
+  pull_request:
+  # release.yml runs these same checks on the commit it releases.
+  workflow_call:
+
+# One run per ref and event. Without this, a quick sequence of pushes leaves several runs racing
+# for the same answer and the last to finish wins, which is not necessarily the last commit. When
+# release.yml calls this workflow, the group is read in the caller's context: the event keeps a
+# release run and a push or pull request run on one ref out of each other's group.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+# Least privilege. Without this the workflow runs with whatever the repository
+# default grants, which is often write: an unnecessary standing capability for a job
+# that only reads the tree and runs tests.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    # Every Python the documents name: 3.11 or later, up to the newest release.
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        # The whole history, for the merge base the vocabulary step below compares with.
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with: { python-version: "${{ matrix.python-version }}" }
+      # Install from the file that documents the dependencies, not a second list beside it,
+      # so that the version bounds recorded there, the `cryptography>=48.0.1` floor recorded
+      # against a specific advisory among them, apply to the job that enforces them.
+      - name: Install test deps
+        run: python -m pip install -r requirements-dev.txt
+      - name: Lint (ruff, pinned in requirements-dev.txt)
+        run: ruff check tools tests
+      # `pull_request`, never `pull_request_target`: this job runs the contributor's code,
+      # so it must run without repository secrets and with a read-only token, which the
+      # trigger and the permissions block above give it. The release gate executes nothing from
+      # the archive it checks, and tests/test_protocol_release_and_conformance.py pins that.
+      - name: Validate protocol release and canonical corpus
+        run: python tools/check_protocol_release.py --root .
+      - name: Normative artifacts match the manifest that declares this repository owns them
+        # Self-consistency and the prose digests: the mirror comparison needs sibling
+        # checkouts this job does not have, so it reports them as skipped rather than passing
+        # over them silently. docs/specification/README.md says where each mirror is compared.
+        run: python tools/check_normative_mirrors.py
+      - name: The registered vocabularies hold their contract and only add to the base branch
+        # verification-vocabularies.md section 9: no value is removed or reinterpreted, and the
+        # version grows by the component the change calls for. The base is the commit this one
+        # shares with the branch a pull request targets, or with the default branch otherwise:
+        # for a pull request that is the tip of its target; for a tag, or a commit release.yml
+        # checks, it is a commit the checked one already contains, so a registration merged to
+        # the default branch later is not read as a value this commit removed.
+        env:
+          BASE_BRANCH: ${{ github.base_ref || github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --quiet origin "$BASE_BRANCH"
+          base="$(git merge-base HEAD FETCH_HEAD)"
+          python tools/registered_vocabularies.py --base "$base"
+      - name: The commands of conformance-testing.md sections 1 and 2 pass where a stranger runs them
+        # Copies this repository into an empty directory and runs the documented commands that check,
+        # extract and validate the pinned corpus, with the packages installed above and nothing else.
+        run: python tools/check_corpus_stranger_run.py
+
+      - name: Run test suite
+        run: PYTHONPATH=. python -m pytest -q
+
+  siblings:
+    # The suite with the published repositories it reads checked out beside this one, where its
+    # tests look for them: the commands of docs/specification/conformance-testing.md §5 and §7
+    # run against loquitur-verify-py, and the code citations of threat-model.md,
+    # verdict-grounds.md and reason-codes.md are resolved in loquitur-verify-py and
+    # loquitur-schemas. The `test` job above has none of them, and those tests skip there.
+    #
+    # LOQUITUR_REQUIRE_SIBLINGS is never set here: the release-set and normative-mirror tests need
+    # loquitur-conformance, which is not published, and would fail on its absence alone.
+    #
+    # The job runs in a public repository: a GITHUB_TOKEN is scoped to its own repository and
+    # cannot check out a private sibling. The probe step asks, with no credentials, which of the
+    # three published siblings are publicly readable, and only those are checked out. A test that
+    # reads a sibling that is not checked out skips and names it; the last step fails the job on
+    # any other skip, so a sibling that is published and missing fails the run.
+    #
+    # The siblings are checked out at the head of their default branches, not at a tag matching
+    # this repository's, so a release run depends on their state when it runs. A sibling that
+    # fails this job on a tag is fixed in the sibling and the run re-run; the tag is not moved.
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-24.04
+    # Every Python the documents name, 3.11 or later, up to the newest release, as in every
+    # job of this workflow that runs Python.
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - name: Find the siblings that are publicly readable
+        id: probe
+        # Outside any checkout, so no stored credential is sent, and with prompts off, so a sibling
+        # that is not public answers "not found" at once instead of asking for a password. Any other
+        # failure (a network error, a server error) is no answer and is asked again, up to four
+        # times with a growing pause. On a tag, which release.yml runs this workflow for, a sibling
+        # still unanswered fails the job, so that a release never skips a sibling's checks for a
+        # transient failure; on any other run it is skipped with a warning.
+        working-directory: ${{ runner.temp }}
+        shell: bash
+        env: { GIT_TERMINAL_PROMPT: "0", OWNER: "${{ github.repository_owner }}", REF_TYPE: "${{ github.ref_type }}" }
+        run: |
+          published=""
+          for repo in loquitur-verify-py loquitur-schemas loquitur-verify-ts; do
+            answer=""
+            for attempt in 1 2 3 4; do
+              status=0
+              error="$(git ls-remote --exit-code "https://github.com/$OWNER/$repo.git" HEAD 2>&1 >/dev/null)" || status=$?
+              if [ "$status" -eq 0 ]; then answer=readable; break; fi
+              # Exit 2 is a repository with no HEAD; the messages are git's for a 401 with prompts
+              # off and for a 404. Each says the sibling is not publicly readable.
+              case "$status:$error" in
+                2:* | *"could not read Username"* | *"Repository not found"* | *"' not found"*) answer=unreadable; break ;;
+              esac
+              echo "probe of $repo failed (attempt $attempt of 4, exit $status): $error"
+              if [ "$attempt" -lt 4 ]; then sleep $((5 << (attempt - 1))); fi
+            done
+            case "$answer" in
+              readable) published="$published $repo" ;;
+              unreadable) ;;
+              *)
+                if [ "$REF_TYPE" = tag ]; then
+                  echo "::error::$repo could not be probed, so this run on a tag cannot tell whether its checks apply"
+                  exit 1
+                fi
+                echo "::warning::$repo could not be probed, so this run skips its checks"
+                ;;
+            esac
+          done
+          echo "published=${published# }" >> "$GITHUB_OUTPUT"
+          echo "publicly readable siblings:${published:- none}"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { path: loquitur-protocol }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: contains(format(' {0} ', steps.probe.outputs.published), ' loquitur-verify-py ')
+        with: { repository: "${{ github.repository_owner }}/loquitur-verify-py", path: loquitur-verify-py }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: contains(format(' {0} ', steps.probe.outputs.published), ' loquitur-schemas ')
+        with: { repository: "${{ github.repository_owner }}/loquitur-schemas", path: loquitur-schemas }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: contains(format(' {0} ', steps.probe.outputs.published), ' loquitur-verify-ts ')
+        with: { repository: "${{ github.repository_owner }}/loquitur-verify-ts", path: loquitur-verify-ts }
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with: { python-version: "${{ matrix.python-version }}" }
+      - name: Install the test dependencies
+        run: python -m pip install -r loquitur-protocol/requirements-dev.txt
+      - name: Install loquitur-verify-py
+        if: contains(format(' {0} ', steps.probe.outputs.published), ' loquitur-verify-py ')
+        run: python -m pip install ./loquitur-verify-py
+      - name: Run test suite; only an unpublished or unreadable sibling may skip a test
+        working-directory: loquitur-protocol
+        shell: bash
+        env: { PUBLISHED: "${{ steps.probe.outputs.published }}" }
+        run: |
+          PYTHONPATH=. python -m pytest -q -rs | tee pytest.log
+          python - <<'PY'
+          import os
+          import sys
+          absent = {"loquitur-verify-py", "loquitur-schemas", "loquitur-verify-ts"} - set(os.environ["PUBLISHED"].split())
+          skips = [line for line in open("pytest.log", encoding="utf-8") if line.startswith("SKIPPED")]
+          other = [
+              line
+              for line in skips
+              if "not published" not in line and "unpublished" not in line and not any(name in line for name in absent)
+          ]
+          if other:
+              sys.exit("tests skipped for a reason other than an unpublished or unreadable sibling:\n" + "".join(other))
+          print(f"{len(skips)} skip line(s), each for an unpublished or unreadable sibling")
+          PY
+
+  dco:
+    # CONTRIBUTING requires a Developer Certificate of Origin sign-off on every commit, and
+    # this job enforces it: a policy that no gate checks holds only by accident.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The sign-off lives in the commit message, so the commits themselves are what
+          # this job reads, and a shallow clone cannot answer the question.
+          fetch-depth: 0
+      - name: Every commit must carry a Signed-off-by matching its author
+        # The event's values reach the script through the environment, never pasted into it: a ref
+        # name may hold characters the shell would read as code.
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          BEFORE: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          base="$BASE_SHA"
+          head="$HEAD_SHA"
+          before="$BEFORE"
+          default="$DEFAULT_BRANCH"
+          zero="0000000000000000000000000000000000000000"
+          if [ -n "$base" ]; then
+            range="$base..$head"
+          elif [ -n "$before" ] && [ "$before" != "$zero" ] && git cat-file -e "$before^{commit}" 2>/dev/null; then
+            range="$before..$head"
+          elif [ "$before" = "$zero" ] && [ "$REF" = "refs/heads/$default" ]; then
+            # The default branch itself is pushed for the first time: no earlier revision of it
+            # exists and no other branch holds its commits, so every commit it carries is new.
+            range="$head"
+          else
+            # A new branch, or a push whose earlier revision this clone does not hold: there
+            # is no earlier revision of the branch to diff against. Its new commits are the
+            # ones not already on the default branch. Every reachable commit is not the
+            # range: that is the default branch's whole history, which a pull request's
+            # range does not contain either.
+            if [ -z "$default" ]; then
+              echo "::error::the event names no default branch to diff a new branch against"
+              exit 1
+            fi
+            ref="refs/remotes/origin/$default"
+            if ! git rev-parse -q --verify "$ref^{commit}" >/dev/null; then
+              git fetch --no-tags --quiet origin "+refs/heads/$default:$ref" || true
+            fi
+            if ! git rev-parse -q --verify "$ref^{commit}" >/dev/null; then
+              echo "::error::default branch $default not found; refusing to check the whole history"
+              exit 1
+            fi
+            range="$ref..$head"
+          fi
+          echo "DCO range: $range"
+
+          commits="$(git rev-list "$range")"
+          # Never report success over an empty range. If it resolves to nothing, fall
+          # back to the tip, which always exists: a pass here must mean a commit was
+          # actually inspected.
+          if [ -z "$commits" ]; then
+            commits="$head"
+          fi
+
+          fail=0
+          count=0
+          for sha in $commits; do
+            count=$((count + 1))
+            author="$(git show -s --format='%an <%ae>' "$sha")"
+            if ! git show -s --format='%B' "$sha" | grep -qiF "Signed-off-by: $author"; then
+              echo "::error::commit $sha by $author carries no matching Signed-off-by"
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "Sign off with: git commit -s   (existing commit: git commit --amend -s)"
+            exit 1
+          fi
+          echo "DCO OK: $count commit(s) inspected, each signed off by its author"

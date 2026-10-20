@@ -1,0 +1,50 @@
+{
+  "branch_id": "0.1.0",
+  "branch_inputs_declared": 0,
+  "branch_inputs_present": false,
+  "members": {
+    "loquitur-conformance": {
+      "branch_input_artifact": null,
+      "branch_input_status": "not_declared",
+      "pointer_sha256": "d62ccc3b5556d1cf265c7b009428681dea5e4a15becfd45eddf386b382c96799",
+      "repository_role": "canonical-conformance-corpus"
+    },
+    "loquitur-protocol": {
+      "branch_input_artifact": null,
+      "branch_input_status": "not_declared",
+      "pointer_sha256": "2ea3b9a68f73e879d0fbb525900a11fa647844386fddd0c714ee04e2a92cf8c5",
+      "repository_role": "normative-specification-governance"
+    },
+    "loquitur-schemas": {
+      "branch_input_artifact": null,
+      "branch_input_status": "not_declared",
+      "pointer_sha256": "05d48fc83424b67c5c8fb4e333d14b5c827afcb8f2e4522c800e7800146581a3",
+      "repository_role": "canonical-schema-package"
+    },
+    "loquitur-verify-py": {
+      "branch_input_artifact": null,
+      "branch_input_status": "not_declared",
+      "pointer_sha256": "35e8ddebc0abadd023b845806c7c2f073cdf95f91c0ce0a76d21d129667ea6de",
+      "repository_role": "python-reference-offline-verifier"
+    },
+    "loquitur-verify-ts": {
+      "branch_input_artifact": null,
+      "branch_input_status": "not_declared",
+      "pointer_sha256": "91945fb6a7c47057f46858b06f0d3742179417af593ee43c96e69f89114cd50b",
+      "repository_role": "typescript-reference-verifier"
+    }
+  },
+  "non_claims": [
+    "not-a-certification-of-an-earlier-release-set",
+    "not-a-claim-that-a-branch-input-was-completed-or-verified",
+    "not-a-release-approval",
+    "not-a-partner-readiness-claim",
+    "records-only-the-repositories-present-when-checked"
+  ],
+  "owner": "loquitur-protocol-governance",
+  "parent_release_set_id": "loquitur-release-set-initial",
+  "release_set_id": "loquitur-release-set-0.1.0",
+  "schema_version": "loquitur.release_set_manifest.v1",
+  "unverifiable_branch_inputs": [],
+  "verification_profile_id": "loquitur.release_set_verifier.v1"
+}

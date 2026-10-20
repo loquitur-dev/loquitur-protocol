@@ -1,0 +1,18 @@
+{
+  "authority": "loquitur-protocol-governance",
+  "canonical_corpus": {
+    "lock_path": "CONFORMANCE_LOCK.json",
+    "repository": "loquitur-conformance"
+  },
+  "oracle_policy": "CONFORMANCE_ORACLE_POLICY.json",
+  "ownership": {
+    "conformance": "canonical vectors, independent oracles, expected outcomes and exact blocking disagreement baseline",
+    "implementations": "execution code and implementation-specific assurance tests",
+    "protocol": "normative semantics and compatibility decisions"
+  },
+  "release_set_id": "loquitur-release-set-0.1.0",
+  "repository": "loquitur-protocol",
+  "rule": "Implementation agreement is necessary but insufficient; independent oracle evidence is mandatory.",
+  "schema_version": "loquitur.conformance_authority.v1",
+  "wire_semantic_change": false
+}

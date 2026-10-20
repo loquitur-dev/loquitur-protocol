@@ -1,0 +1,42 @@
+{
+  "algorithm_substitution_policy": "reject",
+  "automatic_fallback": false,
+  "branch_id": "0.1.0",
+  "non_claims": [
+    "not-an-external-cryptographic-audit",
+    "not-a-production-key-custody-approval",
+    "not-an-authenticated-trust-root"
+  ],
+  "owner": "loquitur-protocol-governance",
+  "profile_id": "loquitur.crypto_capabilities.v0.1",
+  "protocol_release_line": "0.1",
+  "release_set_id": "loquitur-release-set-0.1.0-crypto-capabilities",
+  "reserved_not_supported": [
+    {
+      "activation_rule": "future-breaking-protocol-release-with-normative-vectors-and-all-consumer-support",
+      "id": "ed25519",
+      "issuance": false,
+      "schema_acceptance": true,
+      "status": "not-defined-for-protocol-release-0.1",
+      "verification": false
+    }
+  ],
+  "schema_version": "loquitur.cryptographic_capabilities.v1",
+  "signature_algorithms": [
+    {
+      "digest": "sha256",
+      "id": "secp256k1_ecdsa_sha256",
+      "key_type": "secp256k1",
+      "low_s_required": true,
+      "new_issuance": true,
+      "public_key_encoding": "sec1-uncompressed-hex",
+      "signature_encoding": "ieee-p1363-compact-r-s-hex",
+      "verification": true
+    }
+  ],
+  "status": "normative-closed-capability-set",
+  "trust_registry_key_types": [
+    "secp256k1"
+  ],
+  "unknown_algorithm_policy": "reject"
+}

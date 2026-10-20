@@ -1,0 +1,264 @@
+name: release
+
+# A release is started by pushing a tag vX.Y.Z, and by nothing else. The workflow checks the tag and
+# the tree, builds the release files from the tagged commit, attests each of them in a job that runs
+# nothing but the download and attestation actions, and opens a DRAFT release that carries them.
+# Publishing the draft is the maintainer's act, done by hand; nothing here publishes a release or
+# uploads to a package index. A manual run (workflow_dispatch) checks, builds and attests the files
+# of the branch it is started on and creates no release, for a dry run; one started on a tag is
+# refused.
+# docs/maintainers/releasing.md says what each job does and how a reader checks the files.
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+  workflow_dispatch:
+
+# No permission by default: each job below names the few it needs.
+permissions: {}
+
+jobs:
+  ci:
+    # The repository's own checks, the same workflow pushes and pull requests run, at this commit,
+    # once verify has accepted the tag: a bad tag stops before the matrix starts.
+    needs: verify
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  verify:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.names.outputs.version }}
+      files: ${{ steps.names.outputs.files }}
+      sbom: ${{ steps.names.outputs.sbom }}
+    steps:
+      - name: A manual run is not started on a tag
+        # A dry run runs on a branch; a tag is released by pushing it. A manual run on a tag would
+        # skip the tag checks below and still attest files under the tag's ref.
+        if: github.event_name != 'push' && github.ref_type == 'tag'
+        shell: bash
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          echo "::error::a manual run was started on the tag $TAG; a dry run runs on a branch, and a tag is released by pushing it"
+          exit 1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The whole history and every branch, for the default-branch check below. The tag itself
+          # is not read from this clone; the next step asks GitHub's API for it.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: The tag is annotated, signed, names the commit this run builds, and is on the default branch
+        # Asked of GitHub's API rather than of the clone: only the API reports whether GitHub
+        # verified the tag's signature, and it answers for the tag as GitHub holds it.
+        # GitHub reports a signature verified when it was made by a key registered to the
+        # tagger's account; docs/maintainers/releasing.md says what that does and does not show.
+        if: github.event_name == 'push'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          # Each answer is kept in a variable before it is read: bash checks the status of a
+          # command substitution, and not that of a process substitution, `read < <(gh api ...)`.
+          if ! ref="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$TAG" --jq '[.object.type, .object.sha] | @tsv')"; then
+            echo "::error::GitHub's API gave no answer for the ref of tag $TAG"
+            exit 1
+          fi
+          IFS=$'\t' read -r ref_type tag_sha <<< "$ref"
+          if [ "$ref_type" != "tag" ]; then
+            if [ "$ref_type" = "commit" ]; then
+              echo "::error::tag $TAG is lightweight; a release tag is annotated and signed (git tag -s)"
+            else
+              echo "::error::the ref of tag $TAG names no tag object (type '$ref_type')"
+            fi
+            exit 1
+          fi
+          if ! tag="$(gh api "repos/$GITHUB_REPOSITORY/git/tags/$tag_sha" --jq '[.object.type, .object.sha, .verification.verified, .verification.reason] | @tsv')"; then
+            echo "::error::GitHub's API gave no answer for the tag object $tag_sha of $TAG"
+            exit 1
+          fi
+          IFS=$'\t' read -r target_type target_sha verified reason <<< "$tag"
+          if [ "$target_type" != "commit" ] || [ "$target_sha" != "$GITHUB_SHA" ]; then
+            echo "::error::tag $TAG names $target_type $target_sha, not the commit this run builds ($GITHUB_SHA)"
+            exit 1
+          fi
+          if [ "$verified" != "true" ]; then
+            echo "::error::tag $TAG carries no signature GitHub verifies ($reason)"
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" "refs/remotes/origin/$DEFAULT_BRANCH"; then
+            echo "::error::tag $TAG points at a commit that is not on $DEFAULT_BRANCH"
+            exit 1
+          fi
+          echo "tag $TAG: annotated, signed and verified, on $DEFAULT_BRANCH"
+      - name: The version, the changelog, the lock and the comparison script
+        # The tag is vX.Y.Z of the version PROTOCOL_RELEASE.json gives; CHANGELOG.md has a section
+        # for it; CONFORMANCE_LOCK.json reads as the release gate reads it; and
+        # tools/compare_verify_vectors.py is the script of conformance-testing.md section 7. The
+        # archive itself is checked by tools/check_protocol_release.py, in ci and again in build.
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "push" ]; then
+            python tools/release_files.py check --tag "$TAG"
+          else
+            python tools/release_files.py check
+          fi
+      - name: The names of the files a release carries
+        # Read here, where only this repository's own code has run, so that the attest job can
+        # check the files the build hands it against a list the build did not write.
+        id: names
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "version=$(python tools/release_files.py version)" >> "$GITHUB_OUTPUT"
+          echo "files=$(python tools/release_files.py names | paste -sd ' ' -)" >> "$GITHUB_OUTPUT"
+          echo "sbom=$(python tools/release_files.py sbom-name)" >> "$GITHUB_OUTPUT"
+
+  build:
+    # Builds the files, the SBOM and SHA256SUMS, and hands them on as the workflow artifact
+    # release-files. It installs third-party packages, so it may only read the repository: no
+    # identity token, no attestation, no write.
+    needs: [ci, verify]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Check the pinned archive in a fresh environment
+        # The packages requirements-dev.txt lists, installed into an environment of their own.
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m venv "$RUNNER_TEMP/checks"
+          "$RUNNER_TEMP/checks/bin/python" -m pip install -r requirements-dev.txt
+          "$RUNNER_TEMP/checks/bin/python" tools/check_protocol_release.py --root .
+          lock_artifact="$(python tools/release_files.py artifact)"
+          "$RUNNER_TEMP/checks/bin/python" tools/validate_corpus.py "$lock_artifact"
+      - name: Build the release files
+        # The pinned archive and the comparison script copied byte for byte, the specification
+        # tar.gz, and the license files.
+        shell: bash
+        run: python tools/release_files.py build "$RUNNER_TEMP/release"
+      - name: Write the CycloneDX SBOM of the release files
+        # One component per release file, with its sha256 and its license; the release files are
+        # documents, data and a standard-library script, so the SBOM lists no dependency.
+        shell: bash
+        run: python tools/release_files.py sbom "$RUNNER_TEMP/release"
+      - name: Write SHA256SUMS over the release files and the SBOM
+        shell: bash
+        run: python tools/release_files.py sums "$RUNNER_TEMP/release"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-files
+          path: ${{ runner.temp }}/release/
+          if-no-files-found: error
+          retention-days: 7
+
+  attest:
+    # The one job that may request an identity token and write attestations. It checks out
+    # nothing and installs nothing: it runs the download and attestation actions pinned below and
+    # the runner's shell, and it attests only once the files it was handed are exactly the ones
+    # verify named and SHA256SUMS lists, with the sha256 SHA256SUMS records.
+    needs: [verify, build]
+    runs-on: ubuntu-24.04
+    permissions:
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-files
+          path: ${{ runner.temp }}/release
+      - name: The files are exactly the ones verify named, and the ones SHA256SUMS lists
+        shell: bash
+        working-directory: ${{ runner.temp }}/release
+        env:
+          FILES: ${{ needs.verify.outputs.files }}
+          SBOM: ${{ needs.verify.outputs.sbom }}
+        run: |
+          set -euo pipefail
+          set -f
+          expected="$(printf '%s\n' $FILES)"
+          found="$(find . -mindepth 1 -printf '%P\n' | LC_ALL=C sort)"
+          if [ "$found" != "$expected" ]; then
+            echo "::error::the build handed over other files than verify named"
+            diff <(echo "$expected") <(echo "$found") || true
+            exit 1
+          fi
+          if [ -n "$(find . -mindepth 1 ! -type f)" ]; then
+            echo "::error::a release file is not a regular file"
+            exit 1
+          fi
+          if [ "$(sed 's/^[0-9a-f]\{64\}  //' SHA256SUMS)" != "$(grep -vx SHA256SUMS <<< "$expected")" ]; then
+            echo "::error::SHA256SUMS does not list exactly the other files"
+            exit 1
+          fi
+          sha256sum --strict -c SHA256SUMS
+          # The SBOM attestation is made for the files the SBOM was written for: all but the SBOM
+          # and SHA256SUMS.
+          mkdir "$RUNNER_TEMP/sbom-subjects"
+          grep -vx -e SHA256SUMS -e "$SBOM" <<< "$expected" \
+            | xargs -I{} cp -- {} "$RUNNER_TEMP/sbom-subjects/"
+      - name: Attest the SBOM for the release files
+        # A dry run in a private repository checks without attesting: GitHub offers artifact
+        # attestations there only on some plans. A tag push always attests, and fails if it cannot.
+        if: github.event_name == 'push' || !github.event.repository.private
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: "${{ runner.temp }}/sbom-subjects/*"
+          sbom-path: "${{ runner.temp }}/release/${{ needs.verify.outputs.sbom }}"
+      - name: Attest the provenance of every file
+        if: github.event_name == 'push' || !github.event.repository.private
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: "${{ runner.temp }}/release/*"
+      - name: Say that this dry run attested nothing
+        if: github.event_name != 'push' && github.event.repository.private
+        run: echo "::notice::private repository, so this dry run built, summed and described the files and attested none"
+
+  release:
+    # Only for a tag push; a manual run stops after the attestations.
+    needs: attest
+    if: github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-files
+          path: ${{ runner.temp }}/release
+      - name: The files are the ones the build summed
+        shell: bash
+        working-directory: ${{ runner.temp }}/release
+        run: sha256sum --strict -c SHA256SUMS
+      - name: Create the draft release
+        # --draft: the release stays unpublished until the maintainer publishes it by hand.
+        # --verify-tag: the tag must already exist on GitHub; the command never creates one.
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" --draft --verify-tag --repo "$GITHUB_REPOSITORY" --title "$TAG" \
+            --notes "The changes are in CHANGELOG.md, section ${TAG#v}. docs/maintainers/releasing.md says how to check these files." \
+            "$RUNNER_TEMP"/release/*
