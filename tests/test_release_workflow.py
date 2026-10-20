@@ -609,6 +609,12 @@ def test_the_sbom_describes_the_release_files_and_nothing_else(built: tuple[Path
     current = TOOL.version()
     document = json.loads((out / TOOL.sbom_name(current)).read_text(encoding="utf-8"))
     assert document["bomFormat"] == "CycloneDX" and document["specVersion"] == "1.6"
+    # The attestation action accepts a CycloneDX document only with a serial number, and the same
+    # files must give the same one.
+    assert re.fullmatch(
+        r"urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}", document["serialNumber"]
+    )
+    assert TOOL.sbom_document(out, current)["serialNumber"] == document["serialNumber"]
     assert document["metadata"]["component"]["name"] == "loquitur-protocol"
     assert document["metadata"]["component"]["version"] == current
     # No dependency: the release files are documents, data and a standard-library script.

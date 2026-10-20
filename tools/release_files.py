@@ -44,6 +44,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import uuid
 from pathlib import Path
 
 # A plain import of the release gate beside this file, so that the lock is read by one reader.
@@ -54,6 +55,8 @@ from refresh_prose_digests import OUTSIDE_SPECIFICATION  # noqa: E402
 from requirements_inventory import sections  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
+# Names the SBOM serial number: the same version and digests give the same UUID.
+SBOM_NAMESPACE = "https://github.com/loquitur-dev/loquitur-protocol/sbom/"
 RELEASE_ID = re.compile(r"loquitur-protocol-(?P<version>(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*))")
 SCRIPT = "tools/compare_verify_vectors.py"
 DOCUMENT = "docs/specification/conformance-testing.md"
@@ -105,9 +108,7 @@ def has_changelog_section(changelog: str, current: str) -> bool:
     ASCII digits, and some text stands between it and the next ``## `` heading or the end of the
     file.
     """
-    heading = re.search(
-        rf"^## \[{re.escape(current)}\](?: - \d{{4}}-\d{{2}}-\d{{2}})?$", changelog, re.M | re.ASCII
-    )
+    heading = re.search(rf"^## \[{re.escape(current)}\](?: - \d{{4}}-\d{{2}}-\d{{2}})?$", changelog, re.M | re.ASCII)
     if heading is None:
         return False
     body = re.split(r"^## ", changelog[heading.end() :], maxsplit=1, flags=re.M)[0]
@@ -237,7 +238,9 @@ def sbom_document(out: Path, current: str) -> dict:
 
     The components are the files themselves, every file of ``out`` but the SBOM and SHA256SUMS.
     The release files are documents, data and one script that uses only the Python standard
-    library, so the SBOM lists no dependency.
+    library, so the SBOM lists no dependency. The ``serialNumber`` is a name-based UUID of the
+    version and the digests, so the same files give the same SBOM; the attestation action
+    recognises a CycloneDX document by that member.
     """
     files = sorted(
         (p for p in out.iterdir() if p.is_file() and p.name not in (SUMS, sbom_name(current))), key=lambda p: p.name
@@ -256,9 +259,12 @@ def sbom_document(out: Path, current: str) -> dict:
         if expression:
             component["licenses"] = [{"expression": expression}]
         components.append(component)
+    identity = chr(10).join([current, *(f"{c['name']} {c['hashes'][0]['content']}" for c in components)])
+    serial = uuid.uuid5(uuid.NAMESPACE_URL, SBOM_NAMESPACE + identity)
     return {
         "bomFormat": "CycloneDX",
         "specVersion": "1.6",
+        "serialNumber": f"urn:uuid:{serial}",
         "version": 1,
         "metadata": {
             "component": {
