@@ -83,6 +83,7 @@ loquitur-protocol/
 ├─ CONTRIBUTING.md
 ├─ GOVERNANCE.md
 ├─ CODE_OF_CONDUCT.md
+├─ CITATION.cff                           # how to cite this work; GitHub shows it as "Cite this repository"
 ├─ NOTICE                                 # copyright, and which license covers which files
 ├─ LICENSE-APACHE                         # Apache License 2.0: with LICENSE-MIT, every file LICENSE-docs does not cover
 ├─ LICENSE-MIT                            # MIT license: the other license of those files, at the recipient's option
