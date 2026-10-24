@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you refer to this work, please cite it as below."
+title: "Loquitur protocol: specification, governance and conformance corpus"
+type: software
+version: 0.1.0
+date-released: "2026-10-20"
+abstract: >-
+  An open protocol for verifiable records of the evidence behind valuations.
+  Alpha preview, maintained by one person, with no external review yet.
+authors:
+  - family-names: "Venè"
+    given-names: "Andrea"
+license:
+  - Apache-2.0
+  - MIT
+url: "https://loquitur.dev"
+repository-code: "https://github.com/loquitur-dev/loquitur-protocol"
+keywords:
+  - verification
+  - evidence
+  - open protocol
+  - offline verification
